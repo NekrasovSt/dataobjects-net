@@ -27,6 +27,7 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     [Test]
     public void MillisecondDateTimeWhereTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       ExecuteInsideSession(() => {
         WherePrivate<MillisecondDateTimeEntity, long>(c => c.DateTime==FirstMillisecondDateTime, c => c.Id);
         WherePrivate<MillisecondDateTimeEntity, long>(c => c.DateTime.Hour==FirstMillisecondDateTime.Hour, c => c.Id);

@@ -39,6 +39,7 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     [Test]
     public void CompareTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       ExecuteInsideSession(() => {
         RunTest<SingleDateTimeEntity>(c => c.DateTime > FirstDateTime.Date);
         RunTest<SingleDateTimeEntity>(c => c.DateTime > FirstDateTime.AddSeconds(-1));
@@ -47,6 +48,23 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
         RunTest<SingleDateTimeEntity>(c => c.DateTime < FirstDateTime.Date.AddDays(1));
         RunTest<SingleDateTimeEntity>(c => c.DateTime < FirstDateTime.AddSeconds(1));
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime < FirstMillisecondDateTime.AddMilliseconds(1));
+
+        RunWrongTest<SingleDateTimeEntity>(c => c.DateTime > FirstDateTime);
+        RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime > FirstMillisecondDateTime);
+        RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime < FirstMillisecondDateTime.Date);
+      });
+    }
+
+    [Test]
+    public void MysqlCompareTest()
+    {
+      Require.ProviderIs(StorageProvider.MySql);
+      ExecuteInsideSession(() => {
+        RunTest<SingleDateTimeEntity>(c => c.DateTime > FirstDateTime.Date);
+        RunTest<SingleDateTimeEntity>(c => c.DateTime > FirstDateTime.AddSeconds(-1));
+
+        RunTest<SingleDateTimeEntity>(c => c.DateTime < FirstDateTime.Date.AddDays(1));
+        RunTest<SingleDateTimeEntity>(c => c.DateTime < FirstDateTime.AddSeconds(1));
 
         RunWrongTest<SingleDateTimeEntity>(c => c.DateTime > FirstDateTime);
         RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime > FirstMillisecondDateTime);

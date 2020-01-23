@@ -48,5 +48,36 @@ namespace Xtensive.Orm.Tests
     {
       return instanceOfTypeFromAssembly.GetType().Assembly.GetAssemblyConfiguration();
     }
+
+    /// <summary>
+    /// Cuts down resolution of <see cref="DateTime"/> value if needed.
+    /// </summary>
+    /// <param name="origin">The value to fix.</param>
+    /// <param name="provider">Type of provider.</param>
+    /// <returns>New value with less resolution if <paramref name="provider"/> requires it or untouched <paramref name="origin"/> if the provider doesn't</returns>
+    public static DateTime FixDateTimeForProvider(this DateTime origin, StorageProvider provider)
+    {
+      long? divider;
+      switch (provider) {
+        case StorageProvider.MySql:
+          divider = 10000000;
+          break;
+        case StorageProvider.Firebird:
+          divider = 1000;
+          break;
+        case StorageProvider.PostgreSql:
+          divider = 10;
+          break;
+        default:
+          divider = null;
+          break;
+      }
+
+      if (!divider.HasValue)
+        return origin;
+      var ticks = origin.Ticks;
+      var newTicks = ticks - (ticks % divider.Value);
+      return new DateTime(newTicks);
+    }
   }
 }

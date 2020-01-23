@@ -40,6 +40,15 @@ namespace Xtensive.Orm.Tests.Issues
   {
     private const string VersionFieldName = "Version";
 
+    protected override void CheckRequirements()
+    {
+      base.CheckRequirements();
+      // MySQL does not store milliseconds
+      // and we increase Millisecond part of DateTime value on Version increase
+      // so test is irrelevant to this RDBMS
+      Require.ProviderIsNot(StorageProvider.MySql);
+    }
+
     protected override DomainConfiguration BuildConfiguration()
     {
       var configuration = base.BuildConfiguration();

@@ -114,6 +114,7 @@ namespace Xtensive.Orm.Tests.Issues
     [Test]
     public void AddMillisecondsTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       RunAllTestsDouble(value => e => e.Today.AddMilliseconds(value)==today.AddMilliseconds(value));
     }
   }

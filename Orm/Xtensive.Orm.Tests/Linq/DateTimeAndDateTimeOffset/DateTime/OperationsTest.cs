@@ -98,6 +98,7 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     [Test]
     public void AddMillisecondsTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       ExecuteInsideSession(() => {
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.AddMilliseconds(-2)==FirstMillisecondDateTime.AddMilliseconds(-2));
         RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.AddMilliseconds(-1)==FirstMillisecondDateTime.AddMilliseconds(-2));
@@ -135,6 +136,7 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     [Test]
     public void SubtractDateTimeTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       ExecuteInsideSession(() => {
         RunTest<SingleDateTimeEntity>(c => c.DateTime.Subtract(SecondDateTime)==FirstDateTime.Subtract(SecondDateTime));
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Subtract(SecondDateTime)==FirstMillisecondDateTime.Subtract(SecondDateTime));
@@ -143,6 +145,26 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
         RunWrongTest<SingleDateTimeEntity>(c => c.DateTime.Subtract(SecondDateTime)==FirstDateTime.Subtract(WrongDateTime));
         RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Subtract(SecondDateTime)==FirstMillisecondDateTime.Subtract(WrongDateTime));
         RunWrongTest<SingleDateTimeEntity>(c => c.NullableDateTime.Value.Subtract(SecondDateTime)==NullableDateTime.Subtract(WrongDateTime));
+      });
+    }
+
+    [Test]
+    public void MysqlSubtractDateTimeTest()
+    {
+      Require.ProviderIs(StorageProvider.MySql);
+      ExecuteInsideSession(() => {
+        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var secondDateTime = SecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+
+        RunTest<SingleDateTimeEntity>(c => c.DateTime.Subtract(secondDateTime)==firstDateTime.Subtract(secondDateTime));
+        RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Subtract(secondDateTime)==firstMillisecondDateTime.Subtract(secondDateTime));
+        RunTest<SingleDateTimeEntity>(c => c.NullableDateTime.Value.Subtract(secondDateTime)==nullableDateTime.Subtract(secondDateTime));
+
+        RunWrongTest<SingleDateTimeEntity>(c => c.DateTime.Subtract(secondDateTime)==firstDateTime.Subtract(WrongDateTime));
+        RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Subtract(secondDateTime)==firstMillisecondDateTime.Subtract(WrongDateTime));
+        RunWrongTest<SingleDateTimeEntity>(c => c.NullableDateTime.Value.Subtract(secondDateTime)==nullableDateTime.Subtract(WrongDateTime));
       });
     }
 
@@ -177,6 +199,7 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     [Test]
     public void MinusDateTimeTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       ExecuteInsideSession(() => {
         RunTest<SingleDateTimeEntity>(c => c.DateTime - SecondDateTime==FirstDateTime - SecondDateTime);
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime - SecondDateTime==FirstMillisecondDateTime - SecondDateTime);
@@ -185,6 +208,26 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
         RunWrongTest<SingleDateTimeEntity>(c => c.DateTime - SecondDateTime==FirstDateTime - WrongDateTime);
         RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime - SecondDateTime==FirstMillisecondDateTime - WrongDateTime);
         RunWrongTest<SingleDateTimeEntity>(c => c.NullableDateTime - SecondDateTime==NullableDateTime - WrongDateTime);
+      });
+    }
+
+    [Test]
+    public void MysqlMinisDateTimeTest()
+    {
+      Require.ProviderIs(StorageProvider.MySql);
+      ExecuteInsideSession(() => {
+        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var secondDateTime = SecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+
+        RunTest<SingleDateTimeEntity>(c => c.DateTime - secondDateTime==firstDateTime - secondDateTime);
+        RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime - secondDateTime==firstMillisecondDateTime - secondDateTime);
+        RunTest<SingleDateTimeEntity>(c => c.NullableDateTime - secondDateTime==nullableDateTime - secondDateTime);
+
+        RunWrongTest<SingleDateTimeEntity>(c => c.DateTime - secondDateTime==firstDateTime - WrongDateTime);
+        RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime - secondDateTime==firstMillisecondDateTime - WrongDateTime);
+        RunWrongTest<SingleDateTimeEntity>(c => c.NullableDateTime - secondDateTime==nullableDateTime - WrongDateTime);
       });
     }
   }

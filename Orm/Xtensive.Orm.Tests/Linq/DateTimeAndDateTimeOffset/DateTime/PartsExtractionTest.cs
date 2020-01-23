@@ -98,11 +98,24 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     [Test]
     public void ExtractMillisecondTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       ExecuteInsideSession(() => {
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Millisecond==FirstMillisecondDateTime.Millisecond);
         RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Second==WrongMillisecondDateTime.Millisecond);
       });
     }
+
+    [Test]
+    public void MysqlExtractMillisecondTest()
+    {
+      Require.ProviderIs(StorageProvider.MySql);
+      ExecuteInsideSession(() => {
+        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Millisecond==firstMillisecondDateTime.Millisecond);
+        RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Second==WrongMillisecondDateTime.Millisecond);
+      });
+    }
+
 
     [Test]
     public void ExtractDateTest()
