@@ -830,18 +830,37 @@ namespace Xtensive.Orm.Tests.Linq
     }
 
     [Test]
-    public void SelectStringContainsTest()
+    public void SelectStringContainsTest1()
     {
+      Require.ProviderIs(StorageProvider.Sqlite | StorageProvider.SqlServer | StorageProvider.MySql);
       var result =
         Session.Query.All<Customer>()
-          .Where(c => c.FirstName.Contains('ç'))
-          .OrderBy(c => c.FirstName)
+          .Where(c => c.FirstName.Contains('L'))
+          .OrderBy(c => c.CustomerId)
           .ToArray();
       var expected =
         Session.Query.All<Customer>()
           .ToList()
-          .Where(c => c.FirstName.Contains('ç'))
-          .OrderBy(c => c.FirstName)
+          .Where(c => c.FirstName.Contains('L') || c.FirstName.Contains('l'))
+          .OrderBy(c => c.CustomerId)
+          .ToArray();
+      Assert.IsTrue(expected.SequenceEqual(result));
+    }
+
+    [Test]
+    public void SelectStringContainsTest2()
+    {
+      Require.ProviderIsNot(StorageProvider.Sqlite | StorageProvider.SqlServer | StorageProvider.MySql);
+      var result =
+        Session.Query.All<Customer>()
+          .Where(c => c.FirstName.Contains('L'))
+          .OrderBy(c => c.CustomerId)
+          .ToArray();
+      var expected =
+        Session.Query.All<Customer>()
+          .ToList()
+          .Where(c => c.FirstName.Contains('L'))
+          .OrderBy(c => c.CustomerId)
           .ToArray();
       Assert.IsTrue(expected.SequenceEqual(result));
     }

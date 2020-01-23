@@ -124,7 +124,7 @@ namespace Xtensive.Orm.Tests.Linq
 
     private static Customer GetCustomer()
     {
-      return Session.Demand().Query.All<Customer>().Where(c => c.FirstName=="Luis").Single();
+      return Session.Demand().Query.All<Customer>().Where(c => c.FirstName=="Aaron").Single();
     }
   }
 }

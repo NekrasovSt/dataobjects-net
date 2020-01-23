@@ -19,6 +19,7 @@ namespace Xtensive.Orm.Tests.ObjectModel.ChinookDO
 
   [HierarchyRoot]
   [DebuggerDisplay("{Title} (AlbumId = {AlbumId})")]
+  [Index("Title")]
   public class Album : Entity
   {
     [Field, Key]
@@ -76,6 +77,7 @@ namespace Xtensive.Orm.Tests.ObjectModel.ChinookDO
   }
 
   [HierarchyRoot]
+  [Index("FirstName")]
   [DebuggerDisplay("{FirstName} {LastName} (CustomerId = {CustomerId})")]
   public class Customer : BusinessContact
   {
@@ -218,6 +220,9 @@ namespace Xtensive.Orm.Tests.ObjectModel.ChinookDO
 
   [HierarchyRoot(InheritanceSchema.SingleTable)]
   [DebuggerDisplay("{Name} (TrackId = {TrackId})")]
+  [Index("TypeId")]
+  [Index("Composer")]
+  [Index("Milliseconds")]
   public abstract class Track : Entity
   {
     [Field, Key]

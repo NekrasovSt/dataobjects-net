@@ -29,6 +29,7 @@ namespace Xtensive.Orm.Tests.Linq
     [Test]
     public void UpdateLockThrowTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       var catchedException = ExecuteConcurrentQueries(LockMode.Update, LockBehavior.Wait,
         LockMode.Update, LockBehavior.ThrowIfLocked);
 //      Assert.AreEqual(typeof(StorageException), catchedException.GetType());
@@ -86,6 +87,7 @@ namespace Xtensive.Orm.Tests.Linq
     [Test]
     public void LockNewlyCreatedEntity()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       var track = new AudioTrack() {Name = "SomeTrack"};
       using (Session.DisableSaveChanges())
         track.Lock(LockMode.Exclusive, LockBehavior.ThrowIfLocked);
@@ -141,7 +143,7 @@ namespace Xtensive.Orm.Tests.Linq
     [Test]
     public void ShareLockTest()
     {
-      Require.ProviderIs(StorageProvider.SqlServer | StorageProvider.PostgreSql);
+      Require.ProviderIs(StorageProvider.SqlServer | StorageProvider.PostgreSql | StorageProvider.MySql);
       var catchedException = ExecuteConcurrentQueries(LockMode.Shared, LockBehavior.ThrowIfLocked,
         LockMode.Shared, LockBehavior.ThrowIfLocked);
       Assert.IsNull(catchedException);

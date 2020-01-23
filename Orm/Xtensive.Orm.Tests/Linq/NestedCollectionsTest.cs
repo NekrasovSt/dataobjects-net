@@ -96,7 +96,7 @@ namespace Xtensive.Orm.Tests.Linq
     [Test]
     public void ComplexSubqueryTest()
     {
-      Require.ProviderIsNot(StorageProvider.SqlServerCe);
+      Require.ProviderIsNot(StorageProvider.SqlServerCe | StorageProvider.MySql);
       var result = Session.Query.All<Customer>()
         .Take(2)
         .Select(c => Session.Query.All<Invoice>()
