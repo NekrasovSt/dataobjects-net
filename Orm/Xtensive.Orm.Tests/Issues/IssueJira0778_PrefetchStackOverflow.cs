@@ -43,6 +43,7 @@ namespace Xtensive.Orm.Tests.Issues
         //try to avoid long population
         var domain = base.BuildDomain(firstTryConfig);
         ValidateTestData(domain);
+        return domain;
       }
       catch (SchemaSynchronizationException exception) {
         //schemas differ
@@ -53,14 +54,14 @@ namespace Xtensive.Orm.Tests.Issues
         // create so override existing schema and publish correct data
         isSchemaRecreated = true;
       }
-      var secondTry = configuration.Clone();
-      secondTry.UpgradeMode = DomainUpgradeMode.Recreate;
-      return base.BuildDomain(secondTry);
+      var secondTryConfig = configuration.Clone();
+      secondTryConfig.UpgradeMode = DomainUpgradeMode.Recreate;
+      return base.BuildDomain(secondTryConfig);
     }
 
     protected override void PopulateData()
     {
-      if (isSchemaRecreated)
+      if (!isSchemaRecreated)
         return;
 
       PopulateEmployeeHierarchy(Domain);
@@ -73,7 +74,7 @@ namespace Xtensive.Orm.Tests.Issues
     [Test]
     public void MainTest()
     {
-      using (var session = Domain.OpenSession(new SessionConfiguration(SessionOptions.Default| SessionOptions.AutoActivation) {DefaultCommandTimeout = 3000}))
+      using (var session = Domain.OpenSession(new SessionConfiguration(SessionOptions.Default | SessionOptions.AutoActivation) {DefaultCommandTimeout = 3000}))
       using (var tx = session.OpenTransaction()) {
         ExecuteAsync(session);
       }
@@ -253,12 +254,12 @@ namespace Xtensive.Orm.Tests.Issues
         var Cs = session.Query.ExecuteDelayed(q => q.All<CCCC>().Count());
 
         var isValid = recipientCount.Value==CustomerCount &&
-          employeeCount.Value== 45 &&
+          employeeCount.Value==45 &&
           boss.Value != null &&
           contactCount.Value > CustomerCount * 3 &&
-          As.Value == 10 &&
-          Bs.Value == 100 &&
-          Cs.Value == 1000;
+          As.Value==10 &&
+          Bs.Value==100 &&
+          Cs.Value==1000;
 
         if (!isValid)
           throw new TestDataInvalidException();
@@ -674,7 +675,7 @@ namespace Xtensive.Orm.Tests.Issues.IssueJira0778_PrefetchStackOverflowModel
     [Field]
     public bool MarketingUpdatesEnabled { get; set; }
 
-    [Field(DefaultSqlExpression = "GETUTCDATE()")]
+    [Field]
     public DateTime ModifiedOn { get; set; }
 
     public Contact(Session session, IHasContacts owner, ContactType type, string value)
@@ -684,6 +685,7 @@ namespace Xtensive.Orm.Tests.Issues.IssueJira0778_PrefetchStackOverflowModel
       Type = type;
       MarketingUpdatesEnabled = true;
       Value = value;
+      ModifiedOn = DateTime.UtcNow;
     }
   }
 
@@ -700,7 +702,7 @@ namespace Xtensive.Orm.Tests.Issues.IssueJira0778_PrefetchStackOverflowModel
     public EntitySet<Contact> Contacts { get; private set; }
 
     public Employee(Session session, string firstName, string lastName)
-      :base(session)
+      : base(session)
     {
       FirstName = firstName;
       LastName = lastName;
