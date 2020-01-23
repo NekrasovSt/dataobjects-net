@@ -38,7 +38,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="MySql.Data" Version="6.10.4" ExcludeAssets="contentFiles" />
+    <PackageReference Include="MySql.Data" Version="6.10.9" ExcludeAssets="contentFiles" />
   </ItemGroup>
 
   <ItemGroup>
