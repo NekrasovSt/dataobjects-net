@@ -74,7 +74,13 @@ namespace Xtensive.Orm.Providers
     [Compiler(typeof(DateTime), "DayOfWeek", TargetKind.PropertyGet)]
     public static SqlExpression DateTimeDayOfWeek(SqlExpression _this)
     {
-      return ExpressionTranslationHelpers.ToInt(SqlDml.Extract(SqlDateTimePart.DayOfWeek, _this));
+      var context = ExpressionTranslationContext.Current;
+      var baseExpression = ExpressionTranslationHelpers.ToInt(SqlDml.Extract(SqlDateTimePart.DayOfWeek, _this));
+      if (context==null)
+        return baseExpression;
+      if (context.ProviderInfo.ProviderName==WellKnown.Provider.MySql)
+        return baseExpression - 1; //Mysql starts days of week from 1 unlike in .Net.
+      return baseExpression;
     }
 
     [Compiler(typeof(DateTime), "DayOfYear", TargetKind.PropertyGet)]
