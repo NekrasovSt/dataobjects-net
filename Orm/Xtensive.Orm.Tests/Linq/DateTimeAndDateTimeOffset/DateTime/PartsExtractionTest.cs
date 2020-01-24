@@ -134,6 +134,7 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     [Test]
     public void ExtractTimeOfDayTest()
     {
+      Require.ProviderIsNot(StorageProvider.MySql);
       ExecuteInsideSession(() => {
         RunTest<SingleDateTimeEntity>(c => c.DateTime.TimeOfDay==FirstDateTime.TimeOfDay);
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.TimeOfDay==FirstMillisecondDateTime.TimeOfDay);
@@ -142,6 +143,24 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
         RunWrongTest<SingleDateTimeEntity>(c => c.DateTime.TimeOfDay==WrongDateTime.TimeOfDay);
         RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.TimeOfDay==WrongMillisecondDateTime.TimeOfDay);
         RunWrongTest<SingleDateTimeEntity>(c => c.NullableDateTime.Value.TimeOfDay==WrongDateTime.TimeOfDay);
+      });
+    }
+
+    [Test]
+    public void MysqlExtractTimeOfDayTest()
+    {
+      Require.ProviderIs(StorageProvider.MySql);
+      ExecuteInsideSession(() => {
+        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        RunTest<SingleDateTimeEntity>(c => c.DateTime.TimeOfDay==firstDateTime.TimeOfDay);
+        RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.TimeOfDay==firstMillisecondDateTime.TimeOfDay);
+        RunTest<SingleDateTimeEntity>(c => c.NullableDateTime.Value.TimeOfDay==nullableDateTime.TimeOfDay);
+
+        RunWrongTest<SingleDateTimeEntity>(c => c.DateTime.TimeOfDay == WrongDateTime.TimeOfDay);
+        RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.TimeOfDay == WrongMillisecondDateTime.TimeOfDay);
+        RunWrongTest<SingleDateTimeEntity>(c => c.NullableDateTime.Value.TimeOfDay == WrongDateTime.TimeOfDay);
       });
     }
 
@@ -163,6 +182,14 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     public void ExtractDayOfWeekTest()
     {
       ExecuteInsideSession(() => {
+        RunTest<SingleDateTimeEntity>(c => c.Monday.DayOfWeek==System.DayOfWeek.Monday);
+        RunTest<SingleDateTimeEntity>(c => c.Tuesday.DayOfWeek==System.DayOfWeek.Tuesday);
+        RunTest<SingleDateTimeEntity>(c => c.Wednesday.DayOfWeek==System.DayOfWeek.Wednesday);
+        RunTest<SingleDateTimeEntity>(c => c.Thursday.DayOfWeek==System.DayOfWeek.Thursday);
+        RunTest<SingleDateTimeEntity>(c => c.Friday.DayOfWeek==System.DayOfWeek.Friday);
+        RunTest<SingleDateTimeEntity>(c => c.Saturday.DayOfWeek==System.DayOfWeek.Saturday);
+        RunTest<SingleDateTimeEntity>(c => c.Sunday.DayOfWeek==System.DayOfWeek.Sunday);
+
         RunTest<SingleDateTimeEntity>(c => c.DateTime.DayOfWeek==FirstDateTime.DayOfWeek);
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.DayOfWeek==FirstMillisecondDateTime.DayOfWeek);
         RunTest<SingleDateTimeEntity>(c => c.NullableDateTime.Value.DayOfWeek==NullableDateTime.DayOfWeek);

@@ -21,6 +21,14 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset
     protected static readonly DateTime WrongDateTime = new DateTime(2017, 02, 03, 04, 05, 06, DateTimeKind.Unspecified);
     protected static readonly DateTime NullableDateTime = SecondDateTime;
 
+    protected static readonly DateTime Monday = new DateTime(2020, 1, 6, 03, 04, 05, DateTimeKind.Unspecified);
+    protected static readonly DateTime Tuesday = new DateTime(2020, 1, 7, 03, 04, 05, DateTimeKind.Unspecified);
+    protected static readonly DateTime Wednesday = new DateTime(2020, 1, 8, 03, 04, 05, DateTimeKind.Unspecified);
+    protected static readonly DateTime Thursday = new DateTime(2020, 1, 9, 03, 04, 05, DateTimeKind.Unspecified);
+    protected static readonly DateTime Friday = new DateTime(2020, 1, 10, 03, 04, 05, DateTimeKind.Unspecified);
+    protected static readonly DateTime Saturday = new DateTime(2020, 1, 11, 03, 04, 05, DateTimeKind.Unspecified);
+    protected static readonly DateTime Sunday = new DateTime(2020, 1, 12, 03, 04, 05, DateTimeKind.Unspecified);
+
     protected static readonly DateTime FirstMillisecondDateTime = FirstDateTime.AddMilliseconds(321);
     protected static readonly DateTime SecondMillisecondDateTime = SecondDateTime.AddMilliseconds(987);
     protected static readonly DateTime WrongMillisecondDateTime = WrongDateTime.AddMilliseconds(654);
@@ -37,6 +45,13 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset
     {
       new SingleDateTimeEntity {
         DateTime = FirstDateTime,
+        Monday = Monday,
+        Tuesday = Tuesday,
+        Wednesday = Wednesday,
+        Thursday = Thursday,
+        Friday = Friday,
+        Saturday = Saturday,
+        Sunday = Sunday,
         MillisecondDateTime = FirstMillisecondDateTime,
         NullableDateTime = NullableDateTime
       };

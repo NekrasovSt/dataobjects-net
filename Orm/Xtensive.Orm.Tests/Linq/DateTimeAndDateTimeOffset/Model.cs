@@ -18,6 +18,27 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.Model
     public DateTime DateTime { get; set; }
 
     [Field]
+    public DateTime Monday { get; set; }
+
+    [Field]
+    public DateTime Tuesday { get; set; }
+
+    [Field]
+    public DateTime Wednesday { get; set; }
+
+    [Field]
+    public DateTime Thursday { get; set; }
+
+    [Field]
+    public DateTime Friday { get; set; }
+
+    [Field]
+    public DateTime Saturday { get; set; }
+
+    [Field]
+    public DateTime Sunday { get; set; }
+
+    [Field]
     public DateTime MillisecondDateTime { get; set; }
 
     [Field]
