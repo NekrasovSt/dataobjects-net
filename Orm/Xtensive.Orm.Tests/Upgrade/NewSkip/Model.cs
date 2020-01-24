@@ -9,6 +9,9 @@ using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using Xtensive.Core;
+using Xtensive.Orm;
+using Xtensive.Orm.Building;
+using Xtensive.Orm.Building.Definitions;
 using Xtensive.Orm.Model;
 
 namespace Xtensive.Orm.Tests.Upgrade.NewSkip.Model
@@ -457,6 +460,23 @@ namespace Xtensive.Orm.Tests.Upgrade.NewSkip.Model
       public ComplexKeyEntity(int key1, int key2)
         : base(key1, key2)
       {
+      }
+    }
+
+    public class MySQLModelFixupModule : IModule
+    {
+      public void OnBuilt(Domain domain)
+      {
+      }
+
+      public void OnDefinitionsBuilt(BuildingContext context, DomainModelDef model)
+      {
+        var provider = context.Configuration.ConnectionInfo.ConnectionString ?? context.Configuration.ConnectionInfo.ConnectionUrl.Protocol;
+        if (provider!=WellKnown.Provider.MySql)
+          return;
+        var typeDef = model.Types[typeof (X)];
+        var problemField = typeDef.Fields["FLongString"];
+        problemField.DefaultValue = null;
       }
     }
   }
