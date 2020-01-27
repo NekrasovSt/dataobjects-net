@@ -64,14 +64,14 @@ namespace Xtensive.Orm.Tests.Linq
     [Test]
     public void FirstPredicateTest()
     {
-      var customer = Session.Query.All<Customer>().First(c => c.FirstName=="Luis");
+      var customer = Session.Query.All<Customer>().First(c => c.FirstName=="Frank");
       Assert.IsNotNull(customer);
     }
 
     [Test]
     public void WhereFirstTest()
     {
-      var customer = Session.Query.All<Customer>().Where(c => c.FirstName=="Luis").First();
+      var customer = Session.Query.All<Customer>().Where(c => c.FirstName=="Frank").First();
       Assert.IsNotNull(customer);
     }
 
@@ -85,7 +85,7 @@ namespace Xtensive.Orm.Tests.Linq
     [Test]
     public void FirstOrDefaultPredicateTest()
     {
-      var customer = Session.Query.All<Customer>().FirstOrDefault(c => c.FirstName=="Luis");
+      var customer = Session.Query.All<Customer>().FirstOrDefault(c => c.FirstName=="Frank");
       Assert.IsNotNull(customer);
       customer = Session.Query.All<Customer>().FirstOrDefault(c => c.FirstName=="Aaron");
       Assert.IsNotNull(customer);
@@ -96,7 +96,7 @@ namespace Xtensive.Orm.Tests.Linq
     [Test]
     public void WhereFirstOrDefaultTest()
     {
-      var customer = Session.Query.All<Customer>().Where(c => c.FirstName=="Luis").FirstOrDefault();
+      var customer = Session.Query.All<Customer>().Where(c => c.FirstName=="Frank").FirstOrDefault();
       Assert.IsNotNull(customer);
       customer = Session.Query.All<Customer>().Where(c => c.FirstName=="Aaron").FirstOrDefault();
       Assert.IsNotNull(customer);
@@ -115,7 +115,7 @@ namespace Xtensive.Orm.Tests.Linq
     {
       var customer = Session.Query.All<Customer>().Single(c => c.FirstName=="Aaron");
       Assert.IsNotNull(customer);
-      Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().Where(c => c.FirstName=="Luis").Single());
+      Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().Where(c => c.FirstName=="Frank").Single());
       Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().Where(c => c.FirstName=="ThereIsNoSuchFirstName").Single());
     }
 
@@ -124,7 +124,7 @@ namespace Xtensive.Orm.Tests.Linq
     {
       var customer = Session.Query.All<Customer>().Where(c => c.FirstName=="Aaron").Single();
       Assert.IsNotNull(customer);
-      Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().Where(c => c.FirstName=="Luis").Single());
+      Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().Where(c => c.FirstName=="Frank").Single());
       Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().Where(c => c.FirstName=="ThereIsNoSuchFirstName").Single());
     }
 
@@ -139,7 +139,7 @@ namespace Xtensive.Orm.Tests.Linq
     {
       var customer = Session.Query.All<Customer>().SingleOrDefault(c => c.FirstName=="Aaron");
       Assert.IsNotNull(customer);
-      Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().SingleOrDefault(c => c.FirstName=="Luis"));
+      Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().SingleOrDefault(c => c.FirstName=="Frank"));
       customer = Session.Query.All<Customer>().SingleOrDefault(c => c.FirstName=="ThereIsNoSuchFirstName");
       Assert.IsNull(customer);
     }
@@ -149,7 +149,7 @@ namespace Xtensive.Orm.Tests.Linq
     {
       var customer = Session.Query.All<Customer>().Where(c => c.FirstName=="Aaron").SingleOrDefault();
       Assert.IsNotNull(customer);
-      Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().Where(c => c.FirstName=="Luis").SingleOrDefault());
+      Assert.Throws<InvalidOperationException>(() => Session.Query.All<Customer>().Where(c => c.FirstName=="Frank").SingleOrDefault());
       customer = Session.Query.All<Customer>().Where(c => c.FirstName=="ThereIsNoSuchFirstName").SingleOrDefault();
       Assert.IsNull(customer);
     }
