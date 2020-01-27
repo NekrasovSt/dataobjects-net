@@ -220,7 +220,6 @@ namespace Xtensive.Orm.Tests.ObjectModel.ChinookDO
 
   [HierarchyRoot(InheritanceSchema.SingleTable)]
   [DebuggerDisplay("{Name} (TrackId = {TrackId})")]
-  [Index("TypeId")]
   [Index("Composer")]
   [Index("Milliseconds")]
   public abstract class Track : Entity
