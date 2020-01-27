@@ -17,10 +17,6 @@ namespace Xtensive.Sql.Drivers.MySql.v5_0
     public override bool IsParameterCastRequired(Type type)
     {
       switch (Type.GetTypeCode(type)) {
-        case TypeCode.Byte:
-        case TypeCode.SByte:
-        case TypeCode.Int16:
-        case TypeCode.UInt16:
         case TypeCode.Single:
         case TypeCode.Double:
         case TypeCode.DateTime:
