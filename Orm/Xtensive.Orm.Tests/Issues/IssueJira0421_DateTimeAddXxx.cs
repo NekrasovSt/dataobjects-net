@@ -114,8 +114,14 @@ namespace Xtensive.Orm.Tests.Issues
     [Test]
     public void AddMillisecondsTest()
     {
-      Require.ProviderIsNot(StorageProvider.MySql);
+      CheckNotMySql55();
       RunAllTestsDouble(value => e => e.Today.AddMilliseconds(value)==today.AddMilliseconds(value));
+    }
+
+    private void CheckNotMySql55()
+    {
+      if (StorageProviderInfo.Instance.CheckProviderIs(StorageProvider.MySql) && StorageProviderInfo.Instance.CheckProviderVersionIsAtMost(StorageProviderVersion.MySql56))
+        throw new IgnoreException("Test requires MySQL version greater than 5.5");
     }
   }
 }
