@@ -22,7 +22,7 @@ namespace Xtensive.Orm.Tests.Issues
       [Field, Key]
       public long Id { get; private set; }
 
-      [Field]
+      [Field(Length = 250)]
       public string Name { get; set; }
 
       [Field, Association(OnTargetRemove = OnRemoveAction.Clear)]
@@ -41,7 +41,7 @@ namespace Xtensive.Orm.Tests.Issues
       [Field, Key(1)]
       public long LastEventId { get; private set; }
 
-      [Field(Length = 300)]
+      [Field(Length = 250)]
       public string ApplicationName { get; set; }
 
       [Field]
@@ -75,7 +75,6 @@ namespace Xtensive.Orm.Tests.Issues
         var subscription = new Subscription(1, 1) {ApplicationName = ApplicationName};
         defaultTopic.Subscriptions.Add(subscription);
 
-        
         var subTopic = (from topic in session.Query.All<Topic>() where topic.Name == topicName select topic).SingleOrDefault<Topic>();
         var subscriptions = subTopic.Subscriptions;
         var result = from sub in subscriptions where sub.ApplicationName == ApplicationName select sub;

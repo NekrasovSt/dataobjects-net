@@ -20,7 +20,7 @@ namespace Xtensive.Orm.Tests.Issues.IssueJira0641_IndexFilterExpressionTranslati
     [Field, Key]
     public int Id { get; private set; }
 
-    [Field]
+    [Field(Length = 250)]
     public string Text { get; set; }
 
     [Field]

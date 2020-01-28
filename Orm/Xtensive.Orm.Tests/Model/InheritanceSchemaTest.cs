@@ -18,14 +18,14 @@ namespace Xtensive.Orm.Tests.Model.InheritanceSchemaModel
   [Index("Name")]
   public interface IHasName : IEntity
   {
-    [Field(Length = 1000)]
+    [Field(Length = 250)]
     string Name { get; set; }
   }
 
   [Index("Name")]
   public interface IHasName2 : IEntity
   {
-    [Field(Length = 1000)]
+    [Field(Length = 250)]
     string Name { get; set; }
   }
 
@@ -62,7 +62,7 @@ namespace Xtensive.Orm.Tests.Model.InheritanceSchemaModel
   {
     public string Name { get; set; }
 
-    [Field(Length = 1000)]
+    [Field(Length = 250)]
     public virtual string Tag { get; set; }
   }
 
