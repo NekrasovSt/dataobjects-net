@@ -110,7 +110,7 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     {
       Require.ProviderIs(StorageProvider.MySql);
       ExecuteInsideSession(() => {
-        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Millisecond==firstMillisecondDateTime.Millisecond);
         RunWrongTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Second==WrongMillisecondDateTime.Millisecond);
       });
@@ -151,9 +151,9 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     {
       Require.ProviderIs(StorageProvider.MySql);
       ExecuteInsideSession(() => {
-        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProvider.MySql);
-        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
-        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
+        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
+        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
         RunTest<SingleDateTimeEntity>(c => c.DateTime.TimeOfDay==firstDateTime.TimeOfDay);
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.TimeOfDay==firstMillisecondDateTime.TimeOfDay);
         RunTest<SingleDateTimeEntity>(c => c.NullableDateTime.Value.TimeOfDay==nullableDateTime.TimeOfDay);

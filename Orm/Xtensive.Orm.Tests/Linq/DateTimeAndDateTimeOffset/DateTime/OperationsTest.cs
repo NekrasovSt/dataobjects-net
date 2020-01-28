@@ -153,10 +153,10 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     {
       Require.ProviderIs(StorageProvider.MySql);
       ExecuteInsideSession(() => {
-        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProvider.MySql);
-        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
-        var secondDateTime = SecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
-        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
+        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
+        var secondDateTime = SecondDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
+        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
 
         RunTest<SingleDateTimeEntity>(c => c.DateTime.Subtract(secondDateTime)==firstDateTime.Subtract(secondDateTime));
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime.Subtract(secondDateTime)==firstMillisecondDateTime.Subtract(secondDateTime));
@@ -216,10 +216,10 @@ namespace Xtensive.Orm.Tests.Linq.DateTimeAndDateTimeOffset.DateTimes
     {
       Require.ProviderIs(StorageProvider.MySql);
       ExecuteInsideSession(() => {
-        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProvider.MySql);
-        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
-        var secondDateTime = SecondDateTime.FixDateTimeForProvider(StorageProvider.MySql);
-        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProvider.MySql);
+        var firstDateTime = FirstDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
+        var firstMillisecondDateTime = FirstMillisecondDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
+        var secondDateTime = SecondDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
+        var nullableDateTime = NullableDateTime.FixDateTimeForProvider(StorageProviderInfo.Instance);
 
         RunTest<SingleDateTimeEntity>(c => c.DateTime - secondDateTime==firstDateTime - secondDateTime);
         RunTest<SingleDateTimeEntity>(c => c.MillisecondDateTime - secondDateTime==firstMillisecondDateTime - secondDateTime);
