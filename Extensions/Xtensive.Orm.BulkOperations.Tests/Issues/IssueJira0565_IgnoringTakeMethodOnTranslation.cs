@@ -12,7 +12,7 @@ using Xtensive.Orm.Providers;
 
 namespace Xtensive.Orm.BulkOperations.Tests.Issues
 {
-  public class IssueJira0565_IgnoringTakeMethodOnTranslation : AutoBuildTest
+  public class IssueJira0565_IgnoringTakeMethodOnTranslation : BulkOperationBaseTest
   {
     [Test]
     public void UpdateOperationWithoutLimitation01()

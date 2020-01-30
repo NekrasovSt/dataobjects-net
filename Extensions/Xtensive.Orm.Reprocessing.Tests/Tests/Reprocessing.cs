@@ -12,7 +12,7 @@ using TestCommon.Model;
 
 namespace Xtensive.Orm.Reprocessing.Tests
 {
-  public class Reprocessing : AutoBuildTest
+  public class Reprocessing : ReprocessingBaseTest
   {
     private bool treatNullAsUniqueValue;
 
@@ -191,9 +191,9 @@ namespace Xtensive.Orm.Reprocessing.Tests
       }
     }
 
-    public override void SetUp()
+    public override void TestFixtureSetUp()
     {
-      base.SetUp();
+      base.TestFixtureSetUp();
       treatNullAsUniqueValue = Domain.StorageProviderInfo.ProviderName==WellKnown.Provider.SqlServer;
     }
 

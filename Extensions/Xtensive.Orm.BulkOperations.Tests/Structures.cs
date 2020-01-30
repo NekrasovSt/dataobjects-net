@@ -4,7 +4,7 @@ using TestCommon.Model;
 
 namespace Xtensive.Orm.BulkOperations.Tests
 {
-  internal class Structures : AutoBuildTest
+  internal class Structures : BulkOperationBaseTest
   {
     [Test]
     public void StructuresSet()

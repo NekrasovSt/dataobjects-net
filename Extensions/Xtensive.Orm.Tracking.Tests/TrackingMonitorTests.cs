@@ -12,7 +12,7 @@ using Xtensive.Orm.Tracking.Tests.Model;
 namespace Xtensive.Orm.Tracking.Tests
 {
   [TestFixture]
-  public class TrackingMonitorTests : AutoBuildTest
+  public class TrackingMonitorTests : TrackingTestBase
   {
     private bool listenerIsCalled;
 

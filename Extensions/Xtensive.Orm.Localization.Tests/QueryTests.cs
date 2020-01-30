@@ -7,9 +7,9 @@ using Xtensive.Orm.Localization.Tests.Model;
 namespace Xtensive.Orm.Localization.Tests
 {
   [TestFixture]
-  public class QueryTests : AutoBuildTest
+  public class QueryTests : LocalizationBaseTest
   {
-    protected override void PopulateDatabase()
+    protected override void PopulateData()
     {
       using (var session = Domain.OpenSession()) {
         using (var ts = session.OpenTransaction()) {

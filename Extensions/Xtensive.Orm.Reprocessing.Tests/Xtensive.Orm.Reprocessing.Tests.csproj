@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="AutoBuildTest.cs" />
+    <Compile Include="ReprocessingBaseTest.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Tests\Other.cs" />

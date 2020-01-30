@@ -10,6 +10,7 @@ using System.Globalization;
 using TestCommon;
 using Xtensive.Orm.Configuration;
 using Xtensive.Orm.Localization.Tests.Model;
+using Xtensive.Orm.Tests;
 
 namespace Xtensive.Orm.Localization.Tests
 {
@@ -29,14 +30,9 @@ namespace Xtensive.Orm.Localization.Tests
     private static string SpanishTitle = "Bienvenido!";
     private static string SpanishContent = "Mis amigos mejores! Bienvenido a mi cumpleanos!";
 
-    public override void SetUp()
+    protected override void CheckRequirements()
     {
-      var connection = TestConfiguration.Instance.GetConnectionInfo(TestConfiguration.Instance.Storage);
-      var provider = connection.Provider ?? connection.ConnectionUrl.Protocol;
-      if (provider!=WellKnown.Provider.SqlServer)
-        throw new IgnoreException("The test is for MS SQL Server only.");
-
-      base.SetUp();
+      Require.ProviderIs(StorageProvider.SqlServer);
     }
 
     protected override Domain BuildDomain(DomainConfiguration configuration)
@@ -51,7 +47,7 @@ namespace Xtensive.Orm.Localization.Tests
     {
       var configuration = base.BuildConfiguration();
       configuration.Types.Register(typeof (ILocalizable<>).Assembly);
-      configuration.Types.Register(typeof (AutoBuildTest).Assembly, typeof (AutoBuildTest).Namespace);
+      configuration.Types.Register(typeof (LocalizationBaseTest).Assembly, typeof (LocalizationBaseTest).Namespace);
       configuration.DefaultSchema = DefaultNodeSchema;
       return configuration;
     }

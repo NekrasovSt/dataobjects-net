@@ -14,7 +14,7 @@ using Xtensive.Orm.Security.Cryptography;
 namespace Xtensive.Orm.Security.Tests
 {
   [TestFixture]
-  public class HashingServicesTests : AutoBuildTest
+  public class HashingServicesTests : SecurityTestBase
   {
     private List<string> values;
 

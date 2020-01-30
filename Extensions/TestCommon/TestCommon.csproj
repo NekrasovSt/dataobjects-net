@@ -34,8 +34,6 @@
   <ItemGroup>
     <Compile Include="AssemblyExtensions.cs" />
     <Compile Include="CommonModelTest.cs" />
-    <Compile Include="DomainConfigurationFactory.cs" />
-    <Compile Include="HasAccessToConfigurationTest.cs" />
     <Compile Include="Model\Bar.cs" />
     <Compile Include="Model\Bar2.cs" />
     <Compile Include="Model\Foo.cs" />
@@ -44,8 +42,6 @@
     <Compile Include="Model\Point.cs" />
     <Compile Include="Model\Rectangle.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TestConfiguration.cs" />
-    <Compile Include="Tests\TestConfigurationTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

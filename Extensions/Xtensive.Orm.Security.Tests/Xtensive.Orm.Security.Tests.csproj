@@ -30,7 +30,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include="AutoBuildTest.cs" />
+    <Compile Include="SecurityTestBase.cs" />
     <Compile Include="Model\Branch.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\VipCustomer.cs" />

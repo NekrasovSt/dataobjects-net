@@ -44,7 +44,7 @@ namespace Xtensive.Orm.BulkOperations.Tests.Issues.Model
 
 namespace Xtensive.Orm.BulkOperations.Tests.Issues
 {
-  public class IssueJira0560_ChangeFieldWhichDefinedInAncestorClassBug : AutoBuildTest
+  public class IssueJira0560_ChangeFieldWhichDefinedInAncestorClassBug : BulkOperationBaseTest
   {
     [Test]
     public void UpdateTest()

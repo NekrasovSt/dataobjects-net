@@ -11,7 +11,7 @@ using Xtensive.Orm.Security.Tests.Model;
 
 namespace Xtensive.Orm.Security.Tests
 {
-  public class AuthenticationTests : AutoBuildTest
+  public class AuthenticationTests : SecurityTestBase
   {
     [Test]
     public void MainTest()

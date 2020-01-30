@@ -4,7 +4,7 @@ using Xtensive.Orm.Localization.Tests.Model;
 
 namespace Xtensive.Orm.Localization.Tests
 {
-  public class LocalizationScopeTest : AutoBuildTest
+  public class LocalizationScopeTest : LocalizationBaseTest
   {
     [Test]
     public void MainTest()

@@ -11,7 +11,7 @@ using Xtensive.Tuples;
 namespace Xtensive.Orm.Tracking.Tests
 {
   [TestFixture]
-  public class TrackingItemTests : AutoBuildTest
+  public class TrackingItemTests : TrackingTestBase
   {
     [Test]
     public void MergeNewAndNewTest()

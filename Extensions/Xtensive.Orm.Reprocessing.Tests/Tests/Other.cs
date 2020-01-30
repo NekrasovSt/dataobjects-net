@@ -7,7 +7,7 @@ using Xtensive.Orm.Reprocessing.Configuration;
 
 namespace Xtensive.Orm.Reprocessing.Tests
 {
-  public class Other : AutoBuildTest
+  public class Other : ReprocessingBaseTest
   {
     private class TestExecuteStrategy : HandleUniqueConstraintViolationStrategy
     {

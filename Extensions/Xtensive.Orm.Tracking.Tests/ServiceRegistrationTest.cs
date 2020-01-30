@@ -9,7 +9,7 @@ using NUnit.Framework;
 namespace Xtensive.Orm.Tracking.Tests
 {
   [TestFixture]
-  public class ServiceRegistrationTest : AutoBuildTest
+  public class ServiceRegistrationTest : TrackingTestBase
   {
     [Test]
     public void ShouldReturnInstanceOfTrackingMonitor()

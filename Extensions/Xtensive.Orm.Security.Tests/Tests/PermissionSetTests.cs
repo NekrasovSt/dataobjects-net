@@ -14,7 +14,7 @@ using Xtensive.Orm.Security.Tests.Roles;
 namespace Xtensive.Orm.Security.Tests
 {
   [TestFixture]
-  public class PermissionSetTests : AutoBuildTest
+  public class PermissionSetTests : SecurityTestBase
   {
     [Test]
     public void SalesManagerRoleTest()

@@ -13,7 +13,7 @@ using Xtensive.Orm.Security.Tests.Roles;
 namespace Xtensive.Orm.Security.Tests
 {
   [TestFixture]
-  public class ImpersonationContextTests : AutoBuildTest
+  public class ImpersonationContextTests : SecurityTestBase
   {
     [Test]
     public void SessionImpersonateTest()

@@ -8,7 +8,7 @@ using Xtensive.Orm.Rse;
 
 namespace Xtensive.Orm.BulkOperations.Tests
 {
-  internal class Other : AutoBuildTest
+  internal class Other : BulkOperationBaseTest
   {
     [Test]
     public void CompositeKeyUpdate()

@@ -5,7 +5,7 @@ using Xtensive.Orm.Tracking.Tests.Model;
 namespace Xtensive.Orm.Tracking.Tests
 {
   [TestFixture]
-  public class TrackingStackFrameTests : AutoBuildTest
+  public class TrackingStackFrameTests : TrackingTestBase
   {
 //    [Test]
 //    public void SafelyInsertTheSameItemTwiceTest()

@@ -7,6 +7,7 @@
 using NUnit.Framework;
 using TestCommon;
 using Xtensive.Orm.Security.Configuration;
+using Xtensive.Orm.Tests;
 
 namespace Xtensive.Orm.Security.Tests
 {
