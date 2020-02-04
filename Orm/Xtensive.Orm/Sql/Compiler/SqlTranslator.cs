@@ -1582,7 +1582,8 @@ namespace Xtensive.Sql.Compiler
 
       DataTypeInfo dti = Driver.ServerInfo.DataTypes[type.Type];
       if (dti==null)
-        throw new NotSupportedException(String.Format(Strings.ExTypeXIsNotSupported, type.Type));
+        throw new NotSupportedException(String.Format(Strings.ExTypeXIsNotSupported,
+          (type.Type==SqlType.Unknown) ? type.TypeName : type.Type.Name));
       string text = dti.NativeTypes.First();
 
       if (type.Length.HasValue)
