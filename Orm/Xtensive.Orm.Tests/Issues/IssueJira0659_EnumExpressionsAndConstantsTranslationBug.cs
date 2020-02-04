@@ -982,15 +982,86 @@ namespace Xtensive.Orm.Tests.Issues
     [Test]
     public void MathRoundTest()
     {
+      Require.ProviderIsNot(StorageProvider.Sqlite);
       Action<Session> testAction = (session) => {
-        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>().Select(e => (Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100)).ToArray());
-        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>().Where(e => (Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100) > 1).ToArray());
-        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>().OrderBy(e => Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100).ToArray());
-        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>().Sum(e => Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100));
-        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>().Select(e => (Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100)).ToArray());
-        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>().Where(e => (Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100) > 1).ToArray());
-        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>().OrderBy(e => Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100).ToArray());
-        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>().Sum(e => Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100));
+        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>()
+          .Select(e => (Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100)).ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>()
+          .Where(e => (Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100) > 1).ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>()
+          .OrderBy(e => Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100).ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>()
+          .Sum(e => Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100));
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>()
+          .Select(e => (Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100))
+          .ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>()
+          .Where(e => (Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100) > 1)
+          .ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>()
+          .OrderBy(e => Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100)
+          .ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.DoesNotThrow(() => session.Query.All<EntityWithDecimal>()
+          .Sum(e => Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100));
+      };
+      RunTestInSession(testAction);
+    }
+
+    [Test]
+    public void MathRoundSqliteTest()
+    {
+      Require.ProviderIs(StorageProvider.Sqlite);
+      Action<Session> testAction = (session) => {
+        Assert.Throws<QueryTranslationException>(() => session.Query.All<EntityWithDecimal>()
+          .Where(e => (Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100) > 1).ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.Throws<QueryTranslationException>(() => session.Query.All<EntityWithDecimal>()
+          .OrderBy(e => Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100).ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.Throws<QueryTranslationException>(() => session.Query.All<EntityWithDecimal>()
+          .Sum(e => Math.Truncate(Math.Round(e.Sum, 2) * 100) / 100));
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.Throws<QueryTranslationException>(() => session.Query.All<EntityWithDecimal>()
+          .Where(e => (Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100) > 1)
+          .ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.Throws<QueryTranslationException>(() => session.Query.All<EntityWithDecimal>()
+          .OrderBy(e => Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100)
+          .ToArray());
+      };
+      RunTestInSession(testAction);
+      testAction = (session) => {
+        Assert.Throws<QueryTranslationException>(() => session.Query.All<EntityWithDecimal>()
+          .Sum(e => Math.Truncate(Math.Round(e.Sum, 2, MidpointRounding.AwayFromZero) * 100) / 100));
       };
       RunTestInSession(testAction);
     }

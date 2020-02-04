@@ -272,6 +272,7 @@ namespace Xtensive.Orm.Tests.Storage
     [OneTimeSetUp]
     public void Setup()
     {
+      Require.AllFeaturesSupported(ProviderFeatures.ForeignKeyConstraints);
       sqlDriver = TestSqlDriver.Create(GetConnectionInfo());
     }
 

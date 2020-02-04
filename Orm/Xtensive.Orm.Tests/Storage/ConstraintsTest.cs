@@ -24,6 +24,7 @@ namespace Xtensive.Orm.Tests.Storage
     [Test]
     public void NotNullableViolationTest()
     {
+      Require.ProviderIsNot(StorageProvider.Sqlite);// no column length supported so no exception thrown
       using (var session = Domain.OpenSession()) {
         using (session.OpenTransaction()) {
           var book = new Book();

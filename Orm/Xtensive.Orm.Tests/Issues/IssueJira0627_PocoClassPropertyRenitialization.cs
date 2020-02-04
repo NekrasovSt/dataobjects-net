@@ -21,6 +21,49 @@ namespace Xtensive.Orm.Tests.Issues
   {
     private int businessUnitCount;
 
+    protected override DomainConfiguration BuildConfiguration()
+    {
+      var configuration = base.BuildConfiguration();
+      configuration.UpgradeMode = DomainUpgradeMode.Recreate;
+      configuration.Types.Register(typeof(BusinessUnit).Assembly, typeof(BusinessUnit).Namespace);
+      return configuration;
+    }
+
+    protected override void PopulateData()
+    {
+      using (var session = Domain.OpenSession())
+      using (var transaction = session.OpenTransaction()) {
+        new BusinessUnit {Active = true, QuickbooksClass = "jdfhgkjhfdgjkhjhjh     "};
+        new BusinessUnit {Active = true, QuickbooksClass = "    jdfhgkgjkhjhjh     "};
+        new BusinessUnit {Active = true, QuickbooksClass = " jdfhgkjhjdhfgfdgjkhjhjh"};
+        new BusinessUnit {Active = true, QuickbooksClass = "dfhgkaaaaajkhjhjh "};
+        new BusinessUnit {Active = true, QuickbooksClass = " jdfhgkjhfdgaaaaajh"};
+
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+        new TestEntity {Name = Guid.NewGuid().ToString()};
+
+        new TestEntity {Name = "klegjkrlksl hdfhgh jhthkjhjth " };
+        new TestEntity {Name = " ohgoih oierigh oihreho hoiherigh oherg" };
+        new TestEntity {Name = "jshfhjhgjkherjghewogerogp reopertgo   " };
+        new TestEntity {Name = "hjwroiheorihi oerhoigho hohergoh " };
+        new TestEntity {Name = "wieoru ioritgierh oiheroihg hoidfhgdf" };
+        new TestEntity {Name = "joijie oersidfgo dhhri " };
+        new TestEntity {Name = "fdg lhwoih jngoj bhoihiwht e" };
+        new TestEntity {Name = "rh ihh4i3hi ohierth094t pjpigd" };
+        new TestEntity {Name = "i049 hi0 4th 0fgi08 h03gh "};
+        businessUnitCount = 5;
+
+        transaction.Complete();
+      }
+    }
+
     [Test]
     public void MainTest()
     {
@@ -1819,21 +1862,30 @@ namespace Xtensive.Orm.Tests.Issues
     [Test]
     public void OrderByFieldOfPoco05Test()
     {
-      Require.ProviderIsNot(StorageProvider.Firebird | StorageProvider.MySql);
+      RequireProviderDeniesOrderByNull();
+      //Require.ProviderIsNot(StorageProvider.Firebird | StorageProvider.MySql);
       using (var session = Domain.OpenSession())
       using (var transaction = session.OpenTransaction()) {
-        if (ProviderAllowsOrderByNull())
-          Assert.DoesNotThrow(() =>
-            session.Query.All<TestEntity>()
-              .Select(e => new Poco())
-              .OrderBy(e => e.Name)
-              .ToArray());
-        else
-          Assert.Throws<StorageException>(() =>
-            session.Query.All<TestEntity>()
-              .Select(e => new Poco())
-              .OrderBy(e => e.Name)
-              .ToArray());
+        Assert.Throws<StorageException>(() =>
+          session.Query.All<TestEntity>()
+            .Select(e => new Poco())
+            .OrderBy(e => e.Name)
+            .ToArray());
+      }
+    }
+
+    [Test]
+    public void OrderByFieldOfPoco06Test()
+    {
+      RequireProviderAllowsOrderByNull();
+      //Require.ProviderIsNot(StorageProvider.Firebird | StorageProvider.MySql);
+      using (var session = Domain.OpenSession())
+      using (var transaction = session.OpenTransaction()) {
+        Assert.DoesNotThrow(() =>
+          session.Query.All<TestEntity>()
+            .Select(e => new Poco())
+            .OrderBy(e => e.Name)
+            .ToArray());
       }
     }
 
@@ -1889,10 +1941,24 @@ namespace Xtensive.Orm.Tests.Issues
     [Test]
     public void OrderByDescendingByFieldOfPoco05Test()
     {
-      Require.ProviderIsNot(StorageProvider.Firebird | StorageProvider.MySql | StorageProvider.PostgreSql);
+      RequireProviderDeniesOrderByNull();
       using (var session = Domain.OpenSession())
       using (var transaction = session.OpenTransaction()) {
         Assert.Throws<StorageException>(() =>
+          session.Query.All<TestEntity>()
+            .Select(e => new Poco())
+            .OrderByDescending(e => e.Name)
+            .ToArray());
+      }
+    }
+
+    [Test]
+    public void OrderByDescendingByFieldOfPoco06Test()
+    {
+      RequireProviderAllowsOrderByNull();
+      using (var session = Domain.OpenSession())
+      using (var transaction = session.OpenTransaction()) {
+        Assert.DoesNotThrow(() =>
           session.Query.All<TestEntity>()
             .Select(e => new Poco())
             .OrderByDescending(e => e.Name)
@@ -1993,53 +2059,19 @@ namespace Xtensive.Orm.Tests.Issues
       }
     }
 
-    private bool ProviderAllowsOrderByNull()
+    private void RequireProviderDeniesOrderByNull()
     {
-      var providers = new[] {WellKnown.Provider.PostgreSql};
-      return providers.Contains(ProviderInfo.ProviderName);
+      Require.ProviderIsNot(StorageProvider.Sqlite | StorageProvider.PostgreSql |
+        StorageProvider.MySql | StorageProvider.Firebird);
     }
 
-    protected override void PopulateData()
+    private void RequireProviderAllowsOrderByNull()
     {
-      using (var session = Domain.OpenSession())
-      using (var transaction = session.OpenTransaction()) {
-        new BusinessUnit {Active = true, QuickbooksClass = "jdfhgkjhfdgjkhjhjh     "};
-        new BusinessUnit {Active = true, QuickbooksClass = "    jdfhgkgjkhjhjh     "};
-        new BusinessUnit {Active = true, QuickbooksClass = " jdfhgkjhjdhfgfdgjkhjhjh"};
-        new BusinessUnit {Active = true, QuickbooksClass = "dfhgkaaaaajkhjhjh "};
-        new BusinessUnit {Active = true, QuickbooksClass = " jdfhgkjhfdgaaaaajh"};
-
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-        new TestEntity {Name = Guid.NewGuid().ToString()};
-
-        new TestEntity {Name = "klegjkrlksl hdfhgh jhthkjhjth "};
-        new TestEntity {Name = " ohgoih oierigh oihreho hoiherigh oherg"};
-        new TestEntity {Name = "jshfhjhgjkherjghewogerogp reopertgo   "};
-        new TestEntity {Name = "hjwroiheorihi oerhoigho hohergoh "};
-        new TestEntity {Name = "wieoru ioritgierh oiheroihg hoidfhgdf"};
-        new TestEntity {Name = "joijie oersidfgo dhhri "};
-        new TestEntity {Name = "fdg lhwoih jngoj bhoihiwht e"};
-        new TestEntity {Name = "rh ihh4i3hi ohierth094t pjpigd"};
-        new TestEntity {Name = "i049 hi0 4th 0fgi08 h03gh "};
-        businessUnitCount = 5;
-        transaction.Complete();
-      }
+      Require.ProviderIs(StorageProvider.Sqlite | StorageProvider.PostgreSql |
+        StorageProvider.MySql | StorageProvider.Firebird);
     }
 
-    protected override DomainConfiguration BuildConfiguration()
-    {
-      var configuration = base.BuildConfiguration();
-      configuration.UpgradeMode = DomainUpgradeMode.Recreate;
-      configuration.Types.Register(typeof (BusinessUnit).Assembly, typeof(BusinessUnit).Namespace);
-      return configuration;
-    }
+    
   }
 }
 
