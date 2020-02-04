@@ -58,13 +58,12 @@ namespace Xtensive.Orm.Tests.Storage.FieldSqlDefaultTestModel
     [Field(DefaultValue = 12.12, DefaultSqlExpression = "12.12")]
     public decimal FDecimal { get; set; }
 
-    [Field(DefaultValue = "2012.12.12", DefaultSqlExpression = "'2013.12.13'")]
+    [Field(DefaultValue = "2012-12-12", DefaultSqlExpression = "'2013-12-13'")]
     public DateTime FDateTime { get; set; }
     
     [Field(Length = 1000, DefaultValue = "default value", DefaultSqlExpression = "'sql value'")]
     public string FString { get; set; }
   }
-  
 }
 
 namespace Xtensive.Orm.Tests.Storage
@@ -77,7 +76,7 @@ namespace Xtensive.Orm.Tests.Storage
     {
       var configuration = base.BuildConfiguration();
       configuration.UpgradeMode = DomainUpgradeMode.Recreate;
-      configuration.Types.Register(typeof(TestEntity));
+      configuration.Types.Register(typeof (TestEntity));
       Domain = Domain.Build(configuration);
 
       var driver = TestSqlDriver.Create(Domain.Configuration.ConnectionInfo);
