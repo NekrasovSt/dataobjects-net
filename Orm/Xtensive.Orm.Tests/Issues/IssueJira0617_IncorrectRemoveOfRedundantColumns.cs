@@ -1,6 +1,6 @@
-﻿// Copyright (C) 2015 Xtensive LLC.
-// All rights reserved.
-// For conditions of distribution and use, see license.
+// Copyright (C) 2015-2020 Xtensive LLC.
+// This code is distributed under MIT license terms.
+// See the License.txt file in the project root for more information.
 // Created by: Alexey Kulakov
 // Created:    2015.12.01
 
@@ -694,7 +694,7 @@ namespace Xtensive.Orm.Tests.Issues
           .GroupBy(a => new {
             Currency = a.Currency,
             BalanceHolder = a.BalanceHolder,
-            СreationDate = a.CreationDate,
+            CreationDate = a.CreationDate,
             Deal = a.Deal,
             ExecutionDate = a.ExecutionDate,
             MasterAccount = a.MasterAccount,
@@ -706,7 +706,7 @@ namespace Xtensive.Orm.Tests.Issues
             BalanceHolder = gr.Key.BalanceHolder,
             MasterFinToolBase = gr.Key.MasterFinToolBase,
             Currency = gr.Key.Currency,
-            CreationDate = gr.Key.СreationDate,
+            CreationDate = gr.Key.CreationDate,
             Deal = gr.Key.Deal,
             MasterAccount = gr.Key.MasterAccount,
             Sum = gr.Sum(s => s.Sum),

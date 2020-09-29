@@ -1,6 +1,6 @@
-﻿// Copyright (C) 2003-2010 Xtensive LLC.
-// All rights reserved.
-// For conditions of distribution and use, see license.
+﻿// Copyright (C) 2009-2020 Xtensive LLC.
+// This code is distributed under MIT license terms.
+// See the License.txt file in the project root for more information.
 // Created by: Denis Krjuchkov
 // Created:    2009.04.02
 
@@ -31,7 +31,7 @@ namespace Xtensive.Orm.Linq
       }
     }
 
-    public static Expression<Func<Tuple, bool>> BuildFilterLambda(int startIndex, IList<Type> keyColumnTypes, Parameter<Tuple> keyParameter)
+    public static Expression<Func<Tuple, bool>> BuildFilterLambda(int startIndex, IReadOnlyList<Type> keyColumnTypes, Parameter<Tuple> keyParameter)
     {
       Expression filterExpression = null;
       var tupleParameter = Expression.Parameter(typeof (Tuple), "tuple");
@@ -53,7 +53,7 @@ namespace Xtensive.Orm.Linq
           filterExpression = Expression.And(filterExpression,
             Expression.Equal(tupleParameterFieldAccess, keyParameterFieldAccess));
       }
-      return Expression.Lambda<Func<Tuple, bool>>(filterExpression, tupleParameter);
+      return FastExpression.Lambda<Func<Tuple, bool>>(filterExpression, tupleParameter);
     }
 
     private static Expression CreateEntityQuery(Type elementType)
@@ -83,9 +83,9 @@ namespace Xtensive.Orm.Linq
       var wrapper = Activator.CreateInstance(
         typeof (OwnerWrapper<>).MakeGenericType(owner.GetType()), owner);
       var wrappedOwner = Expression.Property(Expression.Constant(wrapper), "Owner");
-      if (!entitySet.Field.IsDynalicallyDefined)
+      if (!entitySet.Field.IsDynamicallyDefined) {
         return Expression.Property(wrappedOwner, entitySet.Field.UnderlyingProperty);
-      
+      }
       var indexers = owner.GetType().GetProperties(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public)
         .Where(p => p.GetIndexParameters().Any())
         .Select(p => p.GetGetMethod());
@@ -94,10 +94,12 @@ namespace Xtensive.Orm.Linq
 
     public static Expression CreateEntitySetQuery(Expression ownerEntity, FieldInfo field)
     {
-      if (!field.IsDynalicallyDefined && !field.UnderlyingProperty.PropertyType.IsOfGenericType(typeof (EntitySet<>)))
+      if (!field.IsDynamicallyDefined && !field.UnderlyingProperty.PropertyType.IsOfGenericType(typeof(EntitySet<>))) {
         throw Exceptions.InternalError(Strings.ExFieldMustBeOfEntitySetType, OrmLog.Instance);
-      if (field.IsDynalicallyDefined && !field.ValueType.IsOfGenericType(typeof (EntitySet<>)))
+      }
+      if (field.IsDynamicallyDefined && !field.ValueType.IsOfGenericType(typeof(EntitySet<>))) {
         throw Exceptions.InternalError(Strings.ExFieldMustBeOfEntitySetType, OrmLog.Instance);
+      }
 
       var elementType = field.ItemType;
       var association = field.Associations.Last();
@@ -184,8 +186,7 @@ namespace Xtensive.Orm.Linq
 
     public static Type GetSequenceElementType(Type type)
     {
-      var sequenceType = type.GetGenericType(typeof (IEnumerable<>))
-        ?? type.GetInterfaces().Select(i => i.GetGenericType(typeof (IEnumerable<>))).FirstOrDefault(i => i!=null);
+      var sequenceType = type.GetGenericInterface(typeof (IEnumerable<>));
       return sequenceType!=null ? sequenceType.GetGenericArguments()[0] : null;
     }
 

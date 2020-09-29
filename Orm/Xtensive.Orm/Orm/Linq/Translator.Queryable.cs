@@ -1,11 +1,10 @@
-// Copyright (C) 2003-2010 Xtensive LLC.
-// All rights reserved.
-// For conditions of distribution and use, see license.
+// Copyright (C) 2009-2020 Xtensive LLC.
+// This code is distributed under MIT license terms.
+// See the License.txt file in the project root for more information.
 // Created by: Alexis Kochetov
 // Created:    2009.02.27
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -27,6 +26,9 @@ namespace Xtensive.Orm.Linq
 {
   internal sealed partial class Translator : QueryableVisitor
   {
+    private static readonly Type KeyType = typeof(Key);
+    private static readonly Type IEnumerableOfKeyType = typeof(IEnumerable<Key>);
+
     public TranslatorState state;
     private readonly TranslatorContext context;
 
@@ -444,7 +446,7 @@ namespace Xtensive.Orm.Linq
         compiledParameter = elementAtIndex.CachingCompile();
         var skipComparison = Expression.LessThan(elementAtIndex.Body, Expression.Constant(0));
         var condition = Expression.Condition(skipComparison, Expression.Constant(0), Expression.Constant(1));
-        var takeParameter = Expression.Lambda<Func<int>>(condition);
+        var takeParameter = FastExpression.Lambda<Func<int>>(condition);
         rs = projection.ItemProjector.DataSource.Skip(compiledParameter).Take(takeParameter.CachingCompile());
       }
       else {
@@ -706,7 +708,7 @@ namespace Xtensive.Orm.Linq
           var lambdaType = sourceProjection.ItemProjector.Item.Type;
           EnsureAggregateIsPossible(lambdaType, aggregateType, visitedExpression);
           var paramExpression = Expression.Parameter(lambdaType, "arg");
-          aggregateParameter = Expression.Lambda(paramExpression, paramExpression);
+          aggregateParameter = FastExpression.Lambda(paramExpression, paramExpression);
         }
       }
 
@@ -947,7 +949,7 @@ namespace Xtensive.Orm.Linq
         var sortParameter = sortExpression.Parameters[0];
         using (context.Bindings.Add(sortParameter, projection))
         using (state.CreateScope()) {
-          state.ShouldOmmitConvertToObject = true;
+          state.ShouldOmitConvertToObject = true;
           state.CalculateExpressions = true;
           var orderByProjector = (ItemProjectorExpression) VisitLambda(sortExpression);
           var columns = orderByProjector
@@ -1073,7 +1075,7 @@ namespace Xtensive.Orm.Linq
       var visitedSource = Visit(source);
       var sequence = VisitSequence(visitedSource);
 
-      IDisposable indexBinding = null;
+      var indexBinding = BindingCollection<ParameterExpression, ProjectionExpression>.BindingScope.Empty;
       if (collectionSelector.Parameters.Count==2) {
         var indexProjection = GetIndexBinding(collectionSelector, ref sequence);
         indexBinding = context.Bindings.Add(collectionSelector.Parameters[1], indexProjection);
@@ -1084,12 +1086,12 @@ namespace Xtensive.Orm.Linq
         bool isOuter = false;
         if (collectionSelector.Body.NodeType==ExpressionType.Call) {
           var call = (MethodCallExpression) collectionSelector.Body;
-          var genericMethodDefinition = call.Method.GetGenericMethodDefinition();
-          isOuter = call.Method.IsGenericMethod
-            && (genericMethodDefinition==WellKnownMembers.Queryable.DefaultIfEmpty
-              || genericMethodDefinition==WellKnownMembers.Enumerable.DefaultIfEmpty);
-          if (isOuter)
+          var method = call.Method;
+          isOuter = method.IsGenericMethodSpecificationOf(WellKnownMembers.Queryable.DefaultIfEmpty)
+            || method.IsGenericMethodSpecificationOf(WellKnownMembers.Enumerable.DefaultIfEmpty);
+          if (isOuter) {
             collectionSelector = FastExpression.Lambda(call.Arguments[0], outerParameter);
+          }
         }
         ProjectionExpression innerProjection;
         using (state.CreateScope()) {
@@ -1192,7 +1194,7 @@ namespace Xtensive.Orm.Linq
     {
       var parameter = le.Parameters[0];
       ProjectionExpression visitedSource = VisitSequence(expression);
-      IDisposable indexBinding = null;
+      var indexBinding = BindingCollection<ParameterExpression, ProjectionExpression>.BindingScope.Empty;
       if (le.Parameters.Count==2) {
         var indexProjection = GetIndexBinding(le, ref visitedSource);
         indexBinding = context.Bindings.Add(le.Parameters[1], indexProjection);
@@ -1264,11 +1266,9 @@ namespace Xtensive.Orm.Linq
       var parameter = predicate.Parameters[0];
       ProjectionExpression visitedSource;
       using (state.CreateScope()) {
-        if (source.IsLocalCollection(context) &&
-            (source.Type.IsGenericType && source.Type.GetGenericArguments()[0].IsAssignableFrom(typeof (Key))) ||
-            (source.Type.IsAssignableFrom(typeof (Key)))) {
-          var localCollecctionKeyType = LocalCollectionKeyTypeExtractor.Extract((BinaryExpression)predicate.Body);
-          state.TypeOfEntityStoredInKey = localCollecctionKeyType;
+        if (source.IsLocalCollection(context) && IsKeyCollection(source.Type)) {
+          var localCollectionKeyType = LocalCollectionKeyTypeExtractor.Extract((BinaryExpression) predicate.Body);
+          state.TypeOfEntityStoredInKey = localCollectionKeyType;
         }
         state.IncludeAlgorithm = IncludeAlgorithm.Auto;
         visitedSource = VisitSequence(source);
@@ -1306,7 +1306,7 @@ namespace Xtensive.Orm.Linq
           predicateLambda.Body, predicateLambda.Parameters[0], filteredTuple, filterColumnCount);
 
         // Mapping from filter data column to filtered column
-        var filteredColumns = Enumerable.Repeat(-1, filterColumnCount).ToArray();
+        var filteredColumns = new int[filterColumnCount];
         for (int i = 0; i < filterColumnCount; i++) {
           var mapping = filteredColumnMappings[i];
           if (mapping.ColumnIndex >= 0)
@@ -1535,11 +1535,11 @@ namespace Xtensive.Orm.Linq
       var containsMethod = WellKnownMembers.Enumerable.Contains.MakeGenericMethod(elementType);
 
       if (setAIsQuery) {
-        var lambda = Expression.Lambda(Expression.Call(containsMethod, setB, parameter), parameter);
+        var lambda = FastExpression.Lambda(Expression.Call(containsMethod, setB, parameter), parameter);
         return VisitAny(setA, lambda, isRoot);
       }
       else {
-        var lambda = Expression.Lambda(Expression.Call(containsMethod, setA, parameter), parameter);
+        var lambda = FastExpression.Lambda(Expression.Call(containsMethod, setA, parameter), parameter);
         return VisitAny(setB, lambda, isRoot);
       }
     }
@@ -1552,7 +1552,7 @@ namespace Xtensive.Orm.Linq
       var parameter = Expression.Parameter(elementType, "a");
       var containsMethod = WellKnownMembers.Enumerable.Contains.MakeGenericMethod(elementType);
 
-      var lambda = Expression.Lambda(Expression.Call(containsMethod, setA, parameter), parameter);
+      var lambda = FastExpression.Lambda(Expression.Call(containsMethod, setA, parameter), parameter);
       return VisitAll(setB, lambda, isRoot);
     }
 
@@ -1565,13 +1565,19 @@ namespace Xtensive.Orm.Linq
       var parameter = Expression.Parameter(elementType, "a");
       var containsMethod = WellKnownMembers.Enumerable.Contains.MakeGenericMethod(elementType);
       if (setAIsQuery) {
-        var lambda = Expression.Lambda(Expression.Not(Expression.Call(containsMethod, setB, parameter)), parameter);
+        var lambda = FastExpression.Lambda(Expression.Not(Expression.Call(containsMethod, setB, parameter)), parameter);
         return VisitAll(setA, lambda, isRoot);
       }
       else {
-        var lambda = Expression.Lambda(Expression.Not(Expression.Call(containsMethod, setA, parameter)), parameter);
+        var lambda = FastExpression.Lambda(Expression.Not(Expression.Call(containsMethod, setA, parameter)), parameter);
         return VisitAll(setB, lambda, isRoot);
       }
+    }
+
+    private bool IsKeyCollection(Type localCollectionType)
+    {
+      return (localCollectionType.IsArray && localCollectionType.GetElementType() == KeyType)
+        || IEnumerableOfKeyType.IsAssignableFrom(localCollectionType);
     }
   }
 }

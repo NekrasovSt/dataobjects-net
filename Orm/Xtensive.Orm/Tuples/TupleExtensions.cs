@@ -7,10 +7,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Xtensive.Collections;
 using Xtensive.Core;
-using Xtensive.Reflection;
 
 using Xtensive.Tuples.Packed;
 using Xtensive.Tuples.Transform;
@@ -97,7 +95,7 @@ namespace Xtensive.Tuples
     /// <param name="target">Tuple that receives the data.</param>
     /// <param name="map">Target-to-source field index map.
     /// Negative value in this map means "skip this element".</param>
-    public static void CopyTo(this Tuple source, Tuple target, int[] map)
+    public static void CopyTo(this Tuple source, Tuple target, IReadOnlyList<int> map)
     {
       var packedSource = source as PackedTuple;
       var packedTarget = target as PackedTuple;
@@ -198,24 +196,19 @@ namespace Xtensive.Tuples
     /// <param name="tuple">The <see cref="Tuple"/> to get segment from.</param>
     /// <param name="segment">The <see cref="Segment{T}"/> to cut off.</param>
     /// <returns></returns>
-    public static Tuple GetSegment(this Tuple tuple, Segment<int> segment)
+    public static Tuple GetSegment(this Tuple tuple, in Segment<int> segment)
     {
-      var map = new int[segment.Length];
-      for (int i = 0; i < segment.Length; i++)
-        map[i] = segment.Offset + i;
-
-      var types = new ArraySegment<Type>(tuple.Descriptor.FieldTypes, segment.Offset, segment.Length);
-      var descriptor = TupleDescriptor.Create(types.AsEnumerable());
+      var length = segment.Length;
+      var map = new int[length];
+      var fieldTypes = new Type[length];
+      for (var index = 0; index < map.Length; index++) {
+        var sourceIndex = segment.Offset + index;
+        map[index] = sourceIndex;
+        fieldTypes[index] = tuple.Descriptor[sourceIndex];
+      }
+      var descriptor = TupleDescriptor.Create(fieldTypes);
       var transform = new MapTransform(false, descriptor, map);
       return transform.Apply(TupleTransformType.TransformedTuple, tuple);
-    }
-
-    private static IEnumerable<T> AsEnumerable<T>(this ArraySegment<T> segment)
-    {
-      ArgumentValidator.EnsureArgumentNotNull(segment, "segment");
-      int lastPosition = segment.Offset + segment.Count;
-      for (int i = segment.Offset; i < lastPosition; i++)
-        yield return segment.Array[i];
     }
 
     #endregion
@@ -442,12 +435,13 @@ namespace Xtensive.Tuples
 
     private static void CopyPackedValue(PackedTuple source, int sourceIndex, PackedTuple target, int targetIndex)
     {
-      var sourceDescriptor = source.PackedDescriptor.FieldDescriptors[sourceIndex];
-      var targetDescriptor = target.PackedDescriptor.FieldDescriptors[targetIndex];
+      ref var sourceDescriptor = ref source.PackedDescriptor.FieldDescriptors[sourceIndex];
+      ref var targetDescriptor = ref target.PackedDescriptor.FieldDescriptors[targetIndex];
 
-      var fieldState = source.GetFieldState(sourceDescriptor);
-      if (!fieldState.IsAvailable())
+      var fieldState = source.GetFieldState(ref sourceDescriptor);
+      if (!fieldState.IsAvailable()) {
         return;
+      }
 
       if (fieldState.IsAvailableAndNull()) {
         target.SetValue(targetIndex, null);
@@ -455,14 +449,15 @@ namespace Xtensive.Tuples
       }
 
       var accessor = sourceDescriptor.Accessor;
-      if (accessor!=targetDescriptor.Accessor)
+      if (accessor != targetDescriptor.Accessor) {
         throw new InvalidOperationException(string.Format(
           Strings.ExInvalidCast,
           source.PackedDescriptor[sourceIndex],
           target.PackedDescriptor[targetIndex]));
+      }
 
       target.SetFieldState(targetIndex, TupleFieldState.Available);
-      accessor.CopyValue(source, sourceDescriptor, target, targetDescriptor);
+      accessor.CopyValue(source, ref sourceDescriptor, target, ref targetDescriptor);
     }
 
     private static void PartiallyCopyTupleSlow(Tuple source, Tuple target, int sourceStartIndex, int targetStartIndex, int length)
@@ -477,18 +472,18 @@ namespace Xtensive.Tuples
         CopyPackedValue(source, sourceStartIndex + i, target, targetStartIndex + i);
     }
 
-    private static void CopyTupleWithMappingSlow(Tuple source, Tuple target, int[] map)
+    private static void CopyTupleWithMappingSlow(Tuple source, Tuple target, IReadOnlyList<int> map)
     {
-      for (int targetIndex = 0; targetIndex < map.Length; targetIndex++) {
+      for (int targetIndex = 0; targetIndex < map.Count; targetIndex++) {
         var sourceIndex = map[targetIndex];
         if (sourceIndex >= 0)
           CopyValue(source, sourceIndex, target, targetIndex);
       }
     }
 
-    private static void CopyTupleWithMappingFast(PackedTuple source, PackedTuple target, int[] map)
+    private static void CopyTupleWithMappingFast(PackedTuple source, PackedTuple target, IReadOnlyList<int> map)
     {
-      for (int targetIndex = 0; targetIndex < map.Length; targetIndex++) {
+      for (int targetIndex = 0; targetIndex < map.Count; targetIndex++) {
         var sourceIndex = map[targetIndex];
         if (sourceIndex >= 0)
           CopyPackedValue(source, sourceIndex, target, targetIndex);

@@ -1,6 +1,6 @@
-// Copyright (C) 2003-2010 Xtensive LLC.
-// All rights reserved.
-// For conditions of distribution and use, see license.
+// Copyright (C) 2007-2020 Xtensive LLC.
+// This code is distributed under MIT license terms.
+// See the License.txt file in the project root for more information.
 // Created by: Dmitri Maximov
 // Created:    2007.09.10
 
@@ -60,6 +60,7 @@ namespace Xtensive.Orm.Model
     private int? cachedHashCode;
 
     private IList<IPropertyValidator> validators;
+    internal Segment<int> mappingInfo;
 
     #region IsXxx properties
 
@@ -464,7 +465,7 @@ namespace Xtensive.Orm.Model
     /// <summary>
     /// Gets <see cref="MappingInfo"/> for current field.
     /// </summary>
-    public Segment<int> MappingInfo { get; private set; }
+    public Segment<int> MappingInfo => mappingInfo;
 
     /// <summary>
     /// Gets the underlying system property.
@@ -660,7 +661,13 @@ namespace Xtensive.Orm.Model
     /// <summary>
     /// Gets a value indicating whether field is dynamically defined.
     /// </summary>
-    public bool IsDynalicallyDefined { get { return UnderlyingProperty==null; } }
+    [Obsolete("Use IsDynamicallyDefined property")]
+    public bool IsDynalicallyDefined => IsDynamicallyDefined;
+
+    /// <summary>
+    /// Gets a value indicating whether field is dynamically defined.
+    /// </summary>
+    public bool IsDynamicallyDefined => UnderlyingProperty == null;
 
     private void GetColumns(ColumnInfoCollection result)
     {
@@ -710,23 +717,23 @@ namespace Xtensive.Orm.Model
     {
       if (column!=null) {
         if (reflectedType.IsStructure)
-          MappingInfo = new Segment<int>(reflectedType.Columns.IndexOf(column), 1);
+          mappingInfo = new Segment<int>(reflectedType.Columns.IndexOf(column), 1);
         else {
           var primaryIndex = reflectedType.Indexes.PrimaryIndex;
           var indexColumn = primaryIndex.Columns.Where(c => c.Name==column.Name).FirstOrDefault();
           if (indexColumn == null)
             throw new InvalidOperationException();
-          MappingInfo = new Segment<int>(primaryIndex.Columns.IndexOf(indexColumn), 1);
+          mappingInfo = new Segment<int>(primaryIndex.Columns.IndexOf(indexColumn), 1);
         }
       }
-      else 
-        if (Fields.Count > 0)
-          MappingInfo = new Segment<int>(
-            Fields.First().MappingInfo.Offset, Fields.Sum(f => f.IsPrimitive ? f.MappingInfo.Length : 0));
+      else if (Fields.Count > 0) {
+        mappingInfo = new Segment<int>(
+          Fields[0].mappingInfo.Offset, Fields.Sum(f => f.IsPrimitive ? f.mappingInfo.Length : 0));
+      }
 
       if (IsEntity || IsStructure) {
         valueExtractor = new SegmentTransform(
-          false, reflectedType.TupleDescriptor, new Segment<int>(MappingInfo.Offset, MappingInfo.Length));
+          false, reflectedType.TupleDescriptor, new Segment<int>(mappingInfo.Offset, mappingInfo.Length));
       }
     }
 

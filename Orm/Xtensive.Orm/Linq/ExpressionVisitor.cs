@@ -20,10 +20,10 @@ namespace Xtensive.Linq
     protected override ReadOnlyCollection<Expression> VisitExpressionList(ReadOnlyCollection<Expression> expressions)
     {
       bool isChanged = false;
-      var results = new List<Expression>();
+      var results = new List<Expression>(expressions.Count);
       for (int i = 0, n = expressions.Count; i < n; i++) {
         var expression = expressions[i];
-        Expression p = Visit(expression);
+        var p = Visit(expression);
         results.Add(p);
         isChanged |= !ReferenceEquals(expression, p);
       }
@@ -150,7 +150,7 @@ namespace Xtensive.Linq
     {
       Expression body = Visit(l.Body);
       if (body!=l.Body)
-        return Expression.Lambda(l.Type, body, l.Parameters);
+        return FastExpression.Lambda(l.Type, body, l.Parameters);
       return l;
     }
 

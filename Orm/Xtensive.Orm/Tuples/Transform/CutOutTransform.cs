@@ -6,7 +6,6 @@
 
 using System;
 using System.Diagnostics;
-using Xtensive.Collections;
 using Xtensive.Core;
 using Xtensive.Reflection;
 
@@ -57,7 +56,7 @@ namespace Xtensive.Tuples.Transform
     /// <param name="isReadOnly"><see cref="MapTransform.IsReadOnly"/> property value.</param>
     /// <param name="sourceDescriptor">Source tuple descriptor.</param>
     /// <param name="segment">The segment to cut out.</param>
-    public CutOutTransform(bool isReadOnly, TupleDescriptor sourceDescriptor, Segment<int> segment)
+    public CutOutTransform(bool isReadOnly, TupleDescriptor sourceDescriptor, in Segment<int> segment)
       : base(isReadOnly)
     {
       this.segment = segment;
@@ -85,7 +84,7 @@ namespace Xtensive.Tuples.Transform
       else 
         throw new InvalidOperationException(Strings.ExSegmentIsOutOfRange);
       Descriptor = TupleDescriptor.Create(fields);
-      SingleSourceMap = map;
+      SetSingleSourceMap(map);
     }
   }
 }

@@ -5,9 +5,11 @@
 // Created:    2007.08.27
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using Xtensive.Core;
@@ -24,7 +26,7 @@ using TypeInfo = Xtensive.Orm.Model.TypeInfo;
 namespace Xtensive.Orm.Providers
 {
   /// <summary>
-  /// Name builder for <see cref="Orm.Model.DomainModel"/> nodes 
+  /// Name builder for <see cref="Orm.Model.DomainModel"/> nodes
   /// Provides names according to a set of naming rules contained in
   /// <see cref="NamingConvention"/>.
   /// </summary>
@@ -36,12 +38,15 @@ namespace Xtensive.Orm.Providers
     private const string ReferenceForeignKeyFormat = "FK_{0}_{1}_{2}";
     private const string HierarchyForeignKeyFormat = "FK_{0}_{1}";
 
-    private readonly Dictionary<Pair<Type, string>, string> fieldNameCache = new Dictionary<Pair<Type, string>, string>();
-    private readonly object _lock = new object();
+    private static readonly Func<PropertyInfo, string> fieldNameCacheValueFactory =
+      field => field.GetAttribute<OverrideFieldNameAttribute>()?.Name ?? field.Name;
+
     private readonly int maxIdentifierLength;
     private readonly NamingConvention namingConvention;
     private readonly bool isMultidatabase;
     private readonly string defaultDatabase;
+    private readonly ConcurrentDictionary<PropertyInfo, string> fieldNameCache =
+      new ConcurrentDictionary<PropertyInfo, string>();
 
     /// <summary>
     /// Gets the <see cref="Entity.TypeId"/> column name.
@@ -181,24 +186,9 @@ namespace Xtensive.Orm.Providers
       return result;
     }
 
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private string BuildFieldNameInternal(PropertyInfo propertyInfo)
-    {
-      var key = new Pair<Type, string>(propertyInfo.ReflectedType, propertyInfo.Name);
-
-      lock (fieldNameCache) {
-        string result;
-        if (fieldNameCache.TryGetValue(key, out result))
-          return result;
-        var attribute = propertyInfo.GetAttribute<OverrideFieldNameAttribute>();
-        if (attribute!=null) {
-          result = attribute.Name;
-          fieldNameCache.Add(key, result);
-          return result;
-        }
-      }
-
-      return propertyInfo.Name;
-    }
+      => fieldNameCache.GetOrAdd(propertyInfo, fieldNameCacheValueFactory);
 
     /// <summary>
     /// Builds the name of the field.
@@ -206,13 +196,8 @@ namespace Xtensive.Orm.Providers
     /// <param name="propertyInfo">The property info.</param>
     public string BuildFieldName(PropertyInfo propertyInfo)
     {
-      lock (fieldNameCache) {
-        var key = new Pair<Type, string>(propertyInfo.ReflectedType, propertyInfo.Name);
-        string result;
-        return fieldNameCache.TryGetValue(key, out result)
-          ? result
-          : propertyInfo.Name;
-      }
+      ArgumentValidator.EnsureArgumentNotNull(propertyInfo, "propertyInfo");
+      return BuildFieldNameInternal(propertyInfo);
     }
 
     /// <summary>
@@ -273,7 +258,7 @@ namespace Xtensive.Orm.Providers
     }
 
     /// <summary>
-    /// Gets the name for <see cref="ColumnInfo"/> object concatenating 
+    /// Gets the name for <see cref="ColumnInfo"/> object concatenating
     /// <see cref="Node.Name"/> of its declaring type with the original column name.
     /// </summary>
     /// <param name="column">The <see cref="ColumnInfo"/> object.</param>
@@ -281,7 +266,7 @@ namespace Xtensive.Orm.Providers
     public string BuildColumnName(ColumnInfo column)
     {
       ArgumentValidator.EnsureArgumentNotNull(column, "column");
-      if (column.Name.StartsWith(column.Field.DeclaringType.Name + "."))
+      if (column.Name.StartsWith(column.Field.DeclaringType.Name + ".", StringComparison.Ordinal))
         throw new InvalidOperationException();
       string result = string.Concat(column.Field.DeclaringType.Name, ".", column.Name);
       return ApplyNamingRules(result);
@@ -441,9 +426,9 @@ namespace Xtensive.Orm.Providers
     /// <returns>Association name.</returns>
     public string BuildAssociationName(AssociationInfo target)
     {
-      return ApplyNamingRules(string.Format(AssociationPattern, 
-        target.OwnerType.Name, 
-        target.OwnerField.Name, 
+      return ApplyNamingRules(string.Format(AssociationPattern,
+        target.OwnerType.Name,
+        target.OwnerField.Name,
         target.TargetType.Name));
     }
 
@@ -456,9 +441,9 @@ namespace Xtensive.Orm.Providers
     /// <returns>Association name.</returns>
     public string BuildAssociationName(TypeInfo ownerType, FieldInfo ownerField, TypeInfo targetType)
     {
-      return ApplyNamingRules(string.Format(AssociationPattern, 
-        ownerType.Name, 
-        ownerField.Name, 
+      return ApplyNamingRules(string.Format(AssociationPattern,
+        ownerType.Name,
+        ownerField.Name,
         targetType.Name));
     }
 
@@ -470,9 +455,9 @@ namespace Xtensive.Orm.Providers
     /// <returns>Auxiliary type mapping name.</returns>
     public string BuildAuxiliaryTypeMappingName(AssociationInfo target)
     {
-      return ApplyNamingRules(string.Format(AssociationPattern, 
-        target.OwnerType.MappingName ?? target.OwnerType.Name, 
-        target.OwnerField.MappingName ?? target.OwnerField.Name, 
+      return ApplyNamingRules(string.Format(AssociationPattern,
+        target.OwnerType.MappingName ?? target.OwnerType.Name,
+        target.OwnerField.MappingName ?? target.OwnerField.Name,
         target.TargetType.MappingName ?? target.TargetType.Name));
     }
 

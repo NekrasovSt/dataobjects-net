@@ -6,7 +6,6 @@
 
 using System;
 using System.Diagnostics;
-using Xtensive.Collections;
 using Xtensive.Core;
 using Xtensive.Reflection;
 
@@ -56,7 +55,7 @@ namespace Xtensive.Tuples.Transform
     /// <param name="isReadOnly"><see cref="MapTransform.IsReadOnly"/> property value.</param>
     /// <param name="sourceDescriptor">Source tuple descriptor.</param>
     /// <param name="segment">The segment to extract.</param>
-    public SegmentTransform(bool isReadOnly, TupleDescriptor sourceDescriptor, Segment<int> segment)
+    public SegmentTransform(bool isReadOnly, TupleDescriptor sourceDescriptor, in Segment<int> segment)
       : base(isReadOnly)
     {
       this.segment = segment;
@@ -67,7 +66,7 @@ namespace Xtensive.Tuples.Transform
         map[i] = j;
       }
       Descriptor = TupleDescriptor.Create(fields);
-      SingleSourceMap = map;
+      SetSingleSourceMap(map);
     }
   }
 }

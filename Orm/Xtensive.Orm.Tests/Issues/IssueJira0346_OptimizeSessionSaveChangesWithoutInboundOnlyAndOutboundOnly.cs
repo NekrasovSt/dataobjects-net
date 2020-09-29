@@ -1,6 +1,6 @@
-﻿// Copyright (C) 2013 Xtensive LLC.
-// All rights reserved.
-// For conditions of distribution and use, see license.
+// Copyright (C) 2013-2020 Xtensive LLC.
+// This code is distributed under MIT license terms.
+// See the License.txt file in the project root for more information.
 // Created by: Alexey Kulakov
 // Created:    2013.07.30
 
@@ -168,8 +168,8 @@ namespace Xtensive.Orm.Tests.Issues
           Login = "walli98",
           Password = "1", 
           UserInfo = new UserInfo {
-            FirstName = "Иван",
-            LastName = "Бобышкин"
+            FirstName = "John",
+            LastName = "Bean"
           },
           UserState = userStates.Find(el=>el.Name=="Activated"),
           Location = new Location{City = new City{Name = "City1"},Latitude = 0, Longitude = 1}
@@ -178,8 +178,8 @@ namespace Xtensive.Orm.Tests.Issues
           Login = "visa43",
           Password = "1",
           UserInfo = new UserInfo {
-            FirstName = "Иван",
-            LastName = "Похлебкин"
+            FirstName = "John",
+            LastName = "Potter"
           },
           UserState = userStates.Find(el=>el.Name=="Blocked"),
           Location = new Location { City = new City { Name = "City1" }, Latitude = 0, Longitude = 1 }
@@ -188,8 +188,8 @@ namespace Xtensive.Orm.Tests.Issues
           Login = "csi90210",
           Password = "1",
           UserInfo = new UserInfo {
-            FirstName = "Алексей",
-            LastName = "Алексеев"
+            FirstName = "Alex",
+            LastName = "Alexander"
           },
           UserState = userStates.Find(el => el.Name == "Activated"),
           Location = new Location { City = new City { Name = "City1" }, Latitude = 0, Longitude = 1 }
