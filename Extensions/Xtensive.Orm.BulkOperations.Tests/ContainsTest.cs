@@ -5,10 +5,11 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using Xtensive.Orm.BulkOperations.ContainsTestModel;
+using Xtensive.Orm.BulkOperations.Tests.ContainsTestModel;
 using Xtensive.Orm.Configuration;
+using Xtensive.Orm.Tests;
 
-namespace Xtensive.Orm.BulkOperations.ContainsTestModel
+namespace Xtensive.Orm.BulkOperations.Tests.ContainsTestModel
 {
   [HierarchyRoot]
   [KeyGenerator(KeyGeneratorKind.None)]

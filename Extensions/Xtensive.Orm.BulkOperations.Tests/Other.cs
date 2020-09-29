@@ -308,12 +308,12 @@ namespace Xtensive.Orm.BulkOperations.Tests
         var bar3 = new Bar(session, 102) { Name = "test3", Count = 5 };
         session.SaveChanges();
 
-        var updatedCount =  session.Query.All<Bar>()
+        var updatedCount = session.Query.All<Bar>()
           .Where(b => b.Id.In(IncludeAlgorithm.ComplexCondition, idsToUpdate))
           .Update(bar => new Bar(session) { Name = prefix + bar.Name });
         Assert.That(updatedCount, Is.EqualTo(2));
 
-        var all = session.Query.All<Bar>().Where(b=> b.Id == 100 || b.Id == 101 || b.Id == 102).ToList();
+        var all = session.Query.All<Bar>().Where(b => b.Id == 100 || b.Id == 101 || b.Id == 102).ToList();
         var updatedEntities = all.Where(b => b.Id.In(idsToUpdate));
         Assert.That(updatedEntities.All(e => e.Name.StartsWith(prefix)), Is.True);
 
@@ -322,6 +322,8 @@ namespace Xtensive.Orm.BulkOperations.Tests
 
         trx.Complete();
       }
+    }
+
     private void CheckSetFromSelectSupported()
     {
       if (Domain.StorageProviderInfo.ProviderName==WellKnown.Provider.MySql)
